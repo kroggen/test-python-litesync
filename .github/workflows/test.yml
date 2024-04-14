@@ -32,11 +32,12 @@ jobs:
 
     - name: Install native library
       shell: pwsh
-      if: matrix.os == 'windows-latest'
       run: |
         curl -O https://litesync.io/download/litesync-free-windows-x86_64.tar.gz
         tar -xzvf litesync-free-windows-x86_64.tar.gz
         install.bat
 
     - name: Run tests
-      run: python test.py
+      run: |
+        cd $GITHUB_WORKSPACE
+        python test.py
