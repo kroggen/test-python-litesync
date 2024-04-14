@@ -30,6 +30,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install litesync
 
-    - name: Run tests
+    - name: Install native library
+      shell: pwsh
+      if: matrix.os == 'windows-latest'
       run: |
-        python -c "import litesync; import time; print('import worked'); conn = litesync.connect('file:app.db?node=primary&bind=tcp://0.0.0.0:1234'); print('connection opened!'); while not conn.is_ready(): time.sleep(0.100); print('the db is ready!')"
+        curl -O https://litesync.io/download/litesync-free-windows-x86_64.tar.gz
+        tar -xzvf litesync-free-windows-x86_64.tar.gz
+        install.bat
+
+    - name: Run tests
+      run: python test.py
