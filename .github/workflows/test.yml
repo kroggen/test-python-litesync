@@ -32,11 +32,15 @@ jobs:
 
     - name: Install native library
       run: |
+        ls
         curl -O https://litesync.io/download/litesync-free-windows-x86_64.tar.gz
         tar -xzvf litesync-free-windows-x86_64.tar.gz
         .\install.bat
+        ls
 
     - name: Run tests
       run: |
-        cd $GITHUB_WORKSPACE
+        ls
         python test.py
+
+      # cd $GITHUB_WORKSPACE
