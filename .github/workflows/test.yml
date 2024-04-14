@@ -41,5 +41,4 @@ jobs:
       run: |
         ls
         dir C:\Windows\System32\lite*
-        dumpbin /DEPENDENTS C:\Windows\System32\litesync.dll
         python test.py
