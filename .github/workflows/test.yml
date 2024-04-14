@@ -1,0 +1,35 @@
+name: Python Tests on Windows
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, 3.10, 3.11, 3.12]
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install litesync
+
+    - name: Run tests
+      run: |
+        python -c "import litesync; import time; print('import worked'); conn = litesync.connect('file:app.db?node=primary&bind=tcp://0.0.0.0:1234'); print('connection opened!'); while not conn.is_ready(): time.sleep(0.100); print('the db is ready!')"
