@@ -31,7 +31,6 @@ jobs:
         pip install litesync
 
     - name: Install native library
-      shell: pwsh
       run: |
         curl -O https://litesync.io/download/litesync-free-windows-x86_64.tar.gz
         tar -xzvf litesync-free-windows-x86_64.tar.gz
