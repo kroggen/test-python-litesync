@@ -1,4 +1,4 @@
-name: Python Tests on Windows
+name: Test Python wrapper for LiteSync
 
 on:
   push:
@@ -9,11 +9,13 @@ on:
 
 jobs:
   test:
+
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout repository
@@ -24,21 +26,42 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
+    - name: Install native library - Linux
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        wget https://litesync.io/download/litesync-free-linux-x86_64.tar.gz
+        tar -xzvf litesync-free-linux-x86_64.tar.gz
+        sudo ./install
+
+    - name: Install native library - Windows
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        curl -O https://litesync.io/download/litesync-free-windows-x86_64.tar.gz
+        tar -xzvf litesync-free-windows-x86_64.tar.gz
+        .\install.bat
+
+    - name: Install native library - Mac Intel
+      if: matrix.os == 'macos-13'
+      run: |
+        brew update
+        wget https://litesync.io/download/litesync-free-mac-x86_64.tar.gz
+        tar -xzvf litesync-free-mac-x86_64.tar.gz
+        ./install
+
+    - name: Install native library - Mac ARM
+      if: matrix.os == 'macos-14'
+      run: |
+        brew update
+        wget https://litesync.io/download/litesync-free-mac-arm64.tar.gz
+        tar -xzvf litesync-free-mac-arm64.tar.gz
+        ./install
+
+    - name: Install wrapper
       run: |
         python -m pip install --upgrade pip
         pip install litesync
 
-    - name: Install native library
-      run: |
-        ls
-        curl -O https://litesync.io/download/litesync-free-windows-x86_64.tar.gz
-        tar -xzvf litesync-free-windows-x86_64.tar.gz
-        .\install.bat
-        ls
-
-    - name: Run tests
-      run: |
-        ls
-        dir C:\Windows\System32\lite*
-        python test.py
+    - name: Run test
+      run: python test.py
